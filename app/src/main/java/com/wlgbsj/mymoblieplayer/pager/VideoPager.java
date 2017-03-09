@@ -1,13 +1,24 @@
 package com.wlgbsj.mymoblieplayer.pager;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Color;
-import android.view.Gravity;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.wlgbsj.mymoblieplayer.R;
+import com.wlgbsj.mymoblieplayer.adapter.VideoPagerAdapter;
 import com.wlgbsj.mymoblieplayer.base.BasePager;
+import com.wlgbsj.mymoblieplayer.domain.MediaItem;
 import com.wlgbsj.mymoblieplayer.utils.LogUtil;
+
+import java.util.ArrayList;
 
 
 /**
@@ -18,11 +29,41 @@ import com.wlgbsj.mymoblieplayer.utils.LogUtil;
  */
 public class VideoPager extends BasePager {
 
-    private TextView textView;
+    private ListView listview;
+    private ProgressBar pb_loading;
+    private TextView tv_nomedia;
+
+    private ArrayList<MediaItem> mediaItems;
+
+    private VideoPagerAdapter videoPagerAdapter ;
 
     public VideoPager(Context context) {
         super(context);
     }
+
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(mediaItems != null && mediaItems.size() >0){
+                //有数据
+                //设置适配器
+                videoPagerAdapter = new VideoPagerAdapter(context,mediaItems);
+                listview.setAdapter(videoPagerAdapter);
+                //把文本隐藏
+                tv_nomedia.setVisibility(View.GONE);
+            }else{
+                //没有数据
+                //文本显示
+                tv_nomedia.setVisibility(View.VISIBLE);
+            }
+
+
+            //ProgressBar隐藏
+            pb_loading.setVisibility(View.GONE);
+        }
+    };
 
     /**
      * 初始化当前页面的控件，由父类调用
@@ -30,11 +71,11 @@ public class VideoPager extends BasePager {
      */
     @Override
     public View initView() {
-        textView = new TextView(context);
-        textView.setTextSize(30);
-        textView.setTextColor(Color.RED);
-        textView.setGravity(Gravity.CENTER);
-        return textView;
+        View view = View.inflate(context,R.layout.video_pager,null);
+        listview = (ListView) view.findViewById(R.id.listview);
+        pb_loading= (ProgressBar) view.findViewById(R.id.pb_loading);
+        tv_nomedia= (TextView) view.findViewById(R.id.tv_nomedia);
+        return view;
     }
 
 
@@ -42,8 +83,62 @@ public class VideoPager extends BasePager {
     public void initData() {
         super.initData();
         LogUtil.e("本地视频的数据被初始化了。。。");
-        //联网
-        //视频内容
-        textView.setText("本地视频的内容");
+
+        getDataFromLocal();
+
     }
+
+    private void getDataFromLocal() {
+
+        mediaItems = new ArrayList<MediaItem>();
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+
+                ContentResolver contentResolver = context.getContentResolver();
+                Uri uri= MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                String[] strs={
+                        MediaStore.Video.Media.DISPLAY_NAME,//视频文件在sdcard的名称
+                        MediaStore.Video.Media.DURATION,//视频总时长
+                        MediaStore.Video.Media.SIZE,//视频的文件大小
+                        MediaStore.Video.Media.DATA,//视频的绝对地址
+                        MediaStore.Video.Media.ARTIST,//歌曲的演唱者
+
+                };
+                Cursor cursor = contentResolver.query(uri,strs,null,null,null);
+                if(cursor!=null){
+                    while(cursor.moveToNext()){
+                        MediaItem mediaItem = new MediaItem();
+
+                        mediaItems.add(mediaItem);
+
+                        String name = cursor.getString(0);
+                        mediaItem.setName(name);
+
+                        long duration = cursor.getLong(1);
+                        mediaItem.setDuration(duration);
+
+                        long size  = cursor.getLong(2);
+                        mediaItem.setSize(size);
+
+                        String data = cursor.getString(3);
+                        mediaItem.setData(data);
+
+                        String artisl = cursor.getString(4);
+                        mediaItem.setArtist(artisl);
+
+                    }
+
+                    cursor.close();
+                }
+                handler.sendEmptyMessage(0);
+
+            }
+        }.start();
+
+    }
+
+
 }

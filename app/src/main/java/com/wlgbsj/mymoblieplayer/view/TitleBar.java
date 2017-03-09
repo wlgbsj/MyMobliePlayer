@@ -68,6 +68,8 @@ public class TitleBar extends LinearLayout implements View.OnClickListener {
         rl_game.setOnClickListener(this);
         iv_record.setOnClickListener(this);
 
+        //MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+
     }
 
     @Override
