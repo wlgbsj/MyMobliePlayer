@@ -2,17 +2,20 @@ package com.wlgbsj.mymoblieplayer.pager;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wlgbsj.mymoblieplayer.R;
+import com.wlgbsj.mymoblieplayer.activity.SystemVideoPlayer;
 import com.wlgbsj.mymoblieplayer.adapter.VideoPagerAdapter;
 import com.wlgbsj.mymoblieplayer.base.BasePager;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
@@ -75,7 +78,27 @@ public class VideoPager extends BasePager {
         listview = (ListView) view.findViewById(R.id.listview);
         pb_loading= (ProgressBar) view.findViewById(R.id.pb_loading);
         tv_nomedia= (TextView) view.findViewById(R.id.tv_nomedia);
+
+        listview.setOnItemClickListener(new MyOnItemClickListener());
         return view;
+    }
+
+    class MyOnItemClickListener implements AdapterView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              MediaItem mediaItem = mediaItems.get(position);
+
+            Intent intent = new Intent(context,SystemVideoPlayer.class);
+            //1.调起系统所有的播放-隐式意图
+//            Intent intent = new Intent();
+//            intent.setDataAndType(Uri.parse(mediaItem.getData()),"video/*");
+//            context.startActivity(intent);
+
+            //2.调用自己写的播放器-显示意图
+            intent.setDataAndType(Uri.parse(mediaItem.getData()),"video/*");
+            context.startActivity(intent);
+        }
     }
 
 
