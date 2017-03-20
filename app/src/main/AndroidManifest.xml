@@ -23,6 +23,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"/>
         <activity android:name=".activity.SystemVideoPlayer"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape"
             />
     </application>
 

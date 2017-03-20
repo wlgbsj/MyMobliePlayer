@@ -67,6 +67,14 @@ public class VideoPagerAdapter extends BaseAdapter {
         viewHoder.tv_name.setText(mediaItem.getName());
         viewHoder.tv_size.setText(Formatter.formatFileSize(context, mediaItem.getSize()));
         viewHoder.tv_time.setText(utils.stringForTime((int) mediaItem.getDuration()));
+        viewHoder.iv_icon.setImageResource(R.drawable.video_default_icon);
+
+        /*if(!TextUtils.isEmpty(mediaItem.getIamge())){
+        viewHoder.iv_icon.setImageURI(Uri.parse(mediaItem.getIamge()));
+        }else {
+            viewHoder.iv_icon.setImageResource(R.drawable.video_default_icon);
+            //android:src="@drawable/video_default_icon"
+        }*/
 
 
 

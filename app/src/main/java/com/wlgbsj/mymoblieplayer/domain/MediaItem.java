@@ -1,10 +1,12 @@
 package com.wlgbsj.mymoblieplayer.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by wlgbsj on 2017/3/9  18:23.
  */
 
-public class MediaItem {
+public class MediaItem implements Serializable{
     String name;
 
     long duration;
@@ -14,6 +16,16 @@ public class MediaItem {
     String data;
 
     String artist;
+
+    String iamge;
+
+    public String getIamge() {
+        return iamge;
+    }
+
+    public void setIamge(String iamge) {
+        this.iamge = iamge;
+    }
 
     public String getName() {
         return name;
@@ -63,6 +75,7 @@ public class MediaItem {
                 ", size=" + size +
                 ", data='" + data + '\'' +
                 ", artist='" + artist + '\'' +
+                ", iamge='" + iamge + '\'' +
                 '}';
     }
 }

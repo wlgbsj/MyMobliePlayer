@@ -22,6 +22,8 @@ public class TitleBar extends LinearLayout implements View.OnClickListener {
     private View rl_game;
 
     private View iv_record;
+
+    private View iv_321;
     private Context context;
     /**
      * 在代码中实例化该类的时候使用这个方法
@@ -59,11 +61,14 @@ public class TitleBar extends LinearLayout implements View.OnClickListener {
     protected void onFinishInflate() {
         super.onFinishInflate();
         //得到孩子的实例
+
+        iv_321 = getChildAt(0);
         tv_search = getChildAt(1);
         rl_game = getChildAt(2);
         iv_record = getChildAt(3);
 
         //设置点击事件
+        iv_321.setOnClickListener(this);
         tv_search.setOnClickListener(this);
         rl_game.setOnClickListener(this);
         iv_record.setOnClickListener(this);
@@ -75,6 +80,10 @@ public class TitleBar extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case  R.id.iv_321:
+                Toast.makeText(context, "321", Toast.LENGTH_SHORT).show();
+                break;
+
             case R.id.tv_search://搜索
                 Toast.makeText(context, "搜索", Toast.LENGTH_SHORT).show();
                 break;

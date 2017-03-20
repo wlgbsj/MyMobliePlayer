@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -96,7 +97,17 @@ public class VideoPager extends BasePager {
 //            context.startActivity(intent);
 
             //2.调用自己写的播放器-显示意图
-            intent.setDataAndType(Uri.parse(mediaItem.getData()),"video/*");
+           // intent.setDataAndType(Uri.parse(mediaItem.getData()),"video/*");
+           // context.startActivity(intent);
+
+
+            //3.播放列表
+
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist",mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position",position);
             context.startActivity(intent);
         }
     }
@@ -128,8 +139,17 @@ public class VideoPager extends BasePager {
                         MediaStore.Video.Media.SIZE,//视频的文件大小
                         MediaStore.Video.Media.DATA,//视频的绝对地址
                         MediaStore.Video.Media.ARTIST,//歌曲的演唱者
+                        MediaStore.Video.Media.BUCKET_ID,
 
                 };
+/*
+
+                String[] thumbColumns = new String[]{
+                        MediaStore.Video.Thumbnails.DATA,
+                        MediaStore.Video.Thumbnails.VIDEO_ID
+                };
+*/
+
                 Cursor cursor = contentResolver.query(uri,strs,null,null,null);
                 if(cursor!=null){
                     while(cursor.moveToNext()){
@@ -152,6 +172,19 @@ public class VideoPager extends BasePager {
                         String artisl = cursor.getString(4);
                         mediaItem.setArtist(artisl);
 
+                        /*int id = cursor.getInt(5);
+                        String selection = MediaStore.Video.Thumbnails.VIDEO_ID +"=?";
+                        String[] selectionArgs = new String[]{
+                                id+""
+                        };
+                        Cursor thumbCursor = contentResolver.query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI, thumbColumns, selection, selectionArgs, null);
+                        if(thumbCursor.moveToFirst()){
+                            //info.thumbPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
+                            String image = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
+                            mediaItem.setIamge(image);
+
+                        }
+*/
                     }
 
                     cursor.close();
