@@ -268,7 +268,8 @@
             </intent-filter>
 
         </service>
-        <activity android:name=".activity.AudioPlyerActivity"/>
+        <activity android:name=".activity.AudioPlyerActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

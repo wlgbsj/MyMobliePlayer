@@ -1,5 +1,8 @@
 package com.wlgbsj.mymoblieplayer.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -13,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.wlgbsj.mymoblieplayer.IMusicPlayerService;
+import com.wlgbsj.mymoblieplayer.R;
+import com.wlgbsj.mymoblieplayer.activity.AudioPlyerActivity;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
 
 import java.io.IOException;
@@ -23,6 +28,7 @@ import java.util.ArrayList;
  */
 
 public class MusicPlayerService  extends Service{
+    public static final String SEND_MESSAGE_TO_ACTIVITY = "send.message.to.activity";
     private ArrayList<MediaItem> mediaItems;
     private int position;
 
@@ -34,6 +40,7 @@ public class MusicPlayerService  extends Service{
      * 当前播放的音频文件对象
      */
     private MediaItem mediaItem;
+    private NotificationManager manager;
 
     @Override
     public void onCreate() {
@@ -121,6 +128,11 @@ public class MusicPlayerService  extends Service{
         public boolean isPlaying() throws RemoteException {
             return service.isPlaying();
         }
+
+        @Override
+        public void seekTo(int progrss) throws RemoteException {
+            service.seekTo(progrss);
+        }
     };
 
     private void getDataFromLocal() {
@@ -191,7 +203,7 @@ public class MusicPlayerService  extends Service{
             mediaItem = mediaItems.get(position);
 
             if (mediaPlayer != null) {
-                mediaPlayer.release();
+              //  mediaPlayer.release();
                 mediaPlayer.reset();
             }
 
@@ -237,8 +249,17 @@ public class MusicPlayerService  extends Service{
 
         @Override
         public void onPrepared(MediaPlayer mp) {
+            //ctrl+alt+c
+            //通知Activity更新数据
+            notifyChange(SEND_MESSAGE_TO_ACTIVITY);
+
             start();
         }
+    }
+
+    private void notifyChange(String sendMessageToActivity) {
+        Intent intent  = new Intent(sendMessageToActivity);
+        sendBroadcast(intent);
     }
 
 
@@ -248,6 +269,33 @@ public class MusicPlayerService  extends Service{
     private void start() {
 
         mediaPlayer.start();
+
+       /* //当播放歌曲的时候，在状态显示正在播放，点击的时候，可以进入音乐播放页面
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        //最主要
+        Intent intent = new Intent(this, AudioPlyerActivity.class);
+        intent.putExtra("notification",true);//标识来自状态拦
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.notification_music_playing)
+                .setContentTitle("321音乐")
+                .setContentText("正在播放:"+getName())
+                .setContentIntent(pendingIntent)
+                .build();
+        manager.notify(1, notification);*/
+
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Intent intent = new Intent(this, AudioPlyerActivity.class);
+        intent.putExtra("notification",true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.notification_music_playing)
+                .setContentTitle("我的音乐")
+                .setContentText("正在播放："+ getName())
+                .setContentIntent(pendingIntent)
+                .build();
+        manager.notify(1, notification);
     }
 
     /**
@@ -255,6 +303,7 @@ public class MusicPlayerService  extends Service{
      */
     private void pause() {
         mediaPlayer.pause();
+        manager.cancel(1);//暂停的时候停止通知
     }
 
     /**
@@ -270,7 +319,7 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private int getCurrentPosition() {
-        return 0;
+        return mediaPlayer.getCurrentPosition();
     }
 
 
@@ -280,7 +329,7 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private int getDuration() {
-        return 0;
+        return mediaPlayer.getDuration();
     }
 
     /**
@@ -289,7 +338,7 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private String getArtist() {
-        return "";
+        return mediaItem.getArtist();
     }
 
     /**
@@ -298,7 +347,7 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private String getName() {
-        return "";
+        return mediaItem.getName();
     }
 
 
@@ -308,7 +357,7 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private String getAudioPath() {
-        return "";
+        return mediaItem.getData();
     }
 
     /**
@@ -351,5 +400,12 @@ public class MusicPlayerService  extends Service{
      */
     private boolean isPlaying(){
         return mediaPlayer.isPlaying();
+    }
+
+    /**
+     * 进度条
+     */
+    private void seekTo(int progrss){
+        mediaPlayer.seekTo(progrss);
     }
 }
