@@ -1,1 +1,1 @@
-include ':app', ':StartAllPlayer', ':vitamio-sample', ':vitamio', ':AgoraDemo', ':SurfaceViewDemo', ':xutils', ':xUtils3_sample', ':xListView'
+include ':app', ':StartAllPlayer', ':vitamio-sample', ':vitamio', ':AgoraDemo', ':SurfaceViewDemo', ':xutils', ':xUtils3_sample', ':xListView', ':binderService'

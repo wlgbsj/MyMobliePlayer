@@ -261,6 +261,14 @@
             android:theme="@style/noAnimation_Theme"
 
             />
+
+        <service android:name=".service.MusicPlayerService">
+            <intent-filter>
+                <action android:name="com.wlgbsj.MUSICSERVICE"/>
+            </intent-filter>
+
+        </service>
+        <activity android:name=".activity.AudioPlyerActivity"/>
     </application>
 
 </manifest>

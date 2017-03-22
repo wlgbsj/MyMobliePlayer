@@ -811,13 +811,13 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             ll_loading.setVisibility(View.GONE);
 
 
-            //主要是用来记录用户的一些偏好
-//     mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-//                @Override
-//                public void onSeekComplete(MediaPlayer mp) {
-//                    Toast.makeText(SystemVideoPlayer.this, "拖动完成", Toast.LENGTH_SHORT).show();
-//                }
-//            });
+           /* //主要是用来记录用户的一些偏好
+     mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+               @Override
+                public void onSeekComplete(MediaPlayer mp) {
+                    Toast.makeText(SystemVideoPlayer.this, "拖动完成", Toast.LENGTH_SHORT).show();
+                }
+            });*/
 
 
         }

@@ -1,10 +1,14 @@
 package com.wlgbsj.mymoblieplayer.pager;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,7 +57,7 @@ public class VideoPager extends BasePager {
             if(mediaItems != null && mediaItems.size() >0){
                 //有数据
                 //设置适配器
-                videoPagerAdapter = new VideoPagerAdapter(context,mediaItems);
+                videoPagerAdapter = new VideoPagerAdapter(context,mediaItems,true);
                 listview.setAdapter(videoPagerAdapter);
                 //把文本隐藏
                 tv_nomedia.setVisibility(View.GONE);
@@ -131,6 +135,8 @@ public class VideoPager extends BasePager {
             public void run() {
                 super.run();
 
+                isGrantExternalRW((Activity) context);
+       //         SystemClock.sleep(2000);
                 ContentResolver contentResolver = context.getContentResolver();
                 Uri uri= MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
                 String[] strs={
@@ -154,7 +160,7 @@ public class VideoPager extends BasePager {
                 if(cursor!=null){
                     while(cursor.moveToNext()){
                         MediaItem mediaItem = new MediaItem();
-
+                        //提前添加  也可以 应为后面的操作 内存里的数据会自动的发生改变
                         mediaItems.add(mediaItem);
 
                         String name = cursor.getString(0);
@@ -194,6 +200,27 @@ public class VideoPager extends BasePager {
             }
         }.start();
 
+    }
+
+
+    /**
+     * 解决安卓6.0以上版本不能读取外部存储权限的问题
+     * @param activity
+     * @return
+     */
+    public static boolean isGrantExternalRW(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            activity.requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 1);
+
+            return false;
+        }
+
+        return true;
     }
 
 

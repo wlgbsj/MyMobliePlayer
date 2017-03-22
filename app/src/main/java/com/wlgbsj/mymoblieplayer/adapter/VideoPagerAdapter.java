@@ -20,14 +20,16 @@ import java.util.ArrayList;
 
 public class VideoPagerAdapter extends BaseAdapter {
 
+    private final boolean isVideo;
     private Context context;
     private ArrayList<MediaItem> mediaItems;
 
     private Utils utils;
 
-    public VideoPagerAdapter(Context context, ArrayList<MediaItem> mediaItems) {
+    public VideoPagerAdapter(Context context, ArrayList<MediaItem> mediaItems, boolean isVideo) {
         this.context = context;
         this.mediaItems = mediaItems;
+        this.isVideo = isVideo;
         utils = new Utils();
     }
 
@@ -50,7 +52,7 @@ public class VideoPagerAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHoder viewHoder = null;
         if (convertView == null) {
-            convertView = View.inflate(context, R.layout.item_video_pager,null);
+            convertView = View.inflate(context, R.layout.item_video_pager, null);
             viewHoder = new ViewHoder();
             viewHoder.iv_icon = (ImageView) convertView.findViewById(R.id.iv_icon);
             viewHoder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
@@ -76,7 +78,10 @@ public class VideoPagerAdapter extends BaseAdapter {
             //android:src="@drawable/video_default_icon"
         }*/
 
+        if (!isVideo) {
+            viewHoder.iv_icon.setImageResource(R.drawable.music_default_bg);
 
+        }
 
         return convertView;
     }
