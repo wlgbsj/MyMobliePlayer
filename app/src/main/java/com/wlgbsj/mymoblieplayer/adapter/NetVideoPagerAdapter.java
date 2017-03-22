@@ -63,7 +63,7 @@ public class NetVideoPagerAdapter extends BaseAdapter {
         MediaItem mediaItem = mediaItems.get(position);
         viewHoder.tv_name.setText(mediaItem.getName());
         viewHoder.tv_desc.setText(mediaItem.getDesc());
-        //1.使用xUtils3请求图片
+               //1.使用xUtils3请求图片
 //        x.image().bind(viewHoder.iv_icon,mediaItem.getImageUrl());
         //2.使用Glide请求图片
 //        Glide.with(context).load(mediaItem.getImageUrl())
@@ -78,8 +78,6 @@ public class NetVideoPagerAdapter extends BaseAdapter {
                 .placeholder(R.drawable.video_default)
                 .error(R.drawable.video_default)
                 .into(viewHoder.iv_icon);
-
-
         return convertView;
     }
 
