@@ -6,25 +6,36 @@ import java.io.Serializable;
  * Created by wlgbsj on 2017/3/9  18:23.
  */
 
-public class MediaItem implements Serializable{
-    String name;
+public class MediaItem implements Serializable {
 
-    long duration;
+    private String name;
 
-    long size;
+    private long duration;
 
-    String data;
+    private long size;
 
-    String artist;
+    private String data;
 
-    String iamge;
+    private String artist;
 
-    public String getIamge() {
-        return iamge;
+    private String desc;
+
+    private String imageUrl;
+
+    public String getDesc() {
+        return desc;
     }
 
-    public void setIamge(String iamge) {
-        this.iamge = iamge;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -75,7 +86,8 @@ public class MediaItem implements Serializable{
                 ", size=" + size +
                 ", data='" + data + '\'' +
                 ", artist='" + artist + '\'' +
-                ", iamge='" + iamge + '\'' +
+                ", desc='" + desc + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

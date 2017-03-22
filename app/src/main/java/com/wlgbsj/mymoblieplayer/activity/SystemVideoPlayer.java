@@ -789,7 +789,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         //当底层解码准备好的时候
         @Override
         public void onPrepared(MediaPlayer mp) {
-            videoWidth = mp.getVideoWidth();
+            videoWidth = mp.getVideoWidth(); //视频的原始宽高
             videoHeight = mp.getVideoHeight();
             videoview.start();//开始播放
             //1.视频的总时长，关联总长度
@@ -810,7 +810,9 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             //把加载页面消失掉
             ll_loading.setVisibility(View.GONE);
 
-//            mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+
+            //主要是用来记录用户的一些偏好
+//     mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
 //                @Override
 //                public void onSeekComplete(MediaPlayer mp) {
 //                    Toast.makeText(SystemVideoPlayer.this, "拖动完成", Toast.LENGTH_SHORT).show();
