@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wlgbsj.mymoblieplayer.R;
-import com.wlgbsj.mymoblieplayer.activity.AudioPlyerActivity;
+import com.wlgbsj.mymoblieplayer.activity.AudioPlayerActivity;
 import com.wlgbsj.mymoblieplayer.adapter.VideoPagerAdapter;
 import com.wlgbsj.mymoblieplayer.base.BasePager;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
@@ -39,6 +39,9 @@ public class AudioPager extends BasePager {
     private ArrayList<MediaItem> mediaItems;
 
     private VideoPagerAdapter videoPagerAdapter ;
+
+    private int possitionPre ;
+
 
     public AudioPager(Context context) {
         super(context);
@@ -88,11 +91,19 @@ public class AudioPager extends BasePager {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            MediaItem mediaItem = mediaItems.get(position);
 
-            Intent intent = new Intent(context,AudioPlyerActivity.class);
+
+            MediaItem mediaItem = mediaItems.get(position);
+            Intent intent = new Intent(context,AudioPlayerActivity.class);
             intent.putExtra("position",position);
+
+            if(possitionPre==position){//两次点击同一个音乐
+                intent.putExtra("music_same",true);
+            }
+
             context.startActivity(intent);
+
+            possitionPre =position;
         }
     }
 

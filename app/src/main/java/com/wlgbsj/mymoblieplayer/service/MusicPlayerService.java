@@ -17,8 +17,11 @@ import android.widget.Toast;
 
 import com.wlgbsj.mymoblieplayer.IMusicPlayerService;
 import com.wlgbsj.mymoblieplayer.R;
-import com.wlgbsj.mymoblieplayer.activity.AudioPlyerActivity;
+import com.wlgbsj.mymoblieplayer.activity.AudioPlayerActivity;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
+import com.wlgbsj.mymoblieplayer.utils.CacheUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
  * Created by wlgbsj on 2017/3/22  16:01.
  */
 
-public class MusicPlayerService  extends Service{
+public class MusicPlayerService extends Service {
     public static final String SEND_MESSAGE_TO_ACTIVITY = "send.message.to.activity";
     private ArrayList<MediaItem> mediaItems;
     private int position;
@@ -42,9 +45,28 @@ public class MusicPlayerService  extends Service{
     private MediaItem mediaItem;
     private NotificationManager manager;
 
+    /**
+     * 顺序播放       顺序循环播放到最后一个就结束了
+     */
+    public static final int REPEAT_NORMAL = 1;
+    /**
+     * 单曲循环
+     */
+    public static final int REPEAT_SINGLE = 2;
+    /**
+     * 全部循环
+     */
+    public static final int REPEAT_ALL = 3;
+
+    /**
+     * 播放模式
+     */
+    private int playmode = REPEAT_NORMAL;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        playmode = CacheUtils.getPlaymode(this, "playmode");
         //加载音乐列表
         getDataFromLocal();
     }
@@ -189,8 +211,6 @@ public class MusicPlayerService  extends Service{
     }
 
 
-
-
     /**
      * 根据位置打开对应的音频文件,并且播放
      *
@@ -203,7 +223,7 @@ public class MusicPlayerService  extends Service{
             mediaItem = mediaItems.get(position);
 
             if (mediaPlayer != null) {
-              //  mediaPlayer.release();
+                //  mediaPlayer.release();
                 mediaPlayer.reset();
             }
 
@@ -215,6 +235,14 @@ public class MusicPlayerService  extends Service{
                 mediaPlayer.setOnErrorListener(new MyOnErrorListener());
                 mediaPlayer.setDataSource(mediaItem.getData());
                 mediaPlayer.prepareAsync();
+
+                if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+                    //单曲循环播放-不会触发播放完成的回调
+                    mediaPlayer.setLooping(true);
+                } else {
+                    //不循环播放
+                    mediaPlayer.setLooping(false);
+                }
 
 
             } catch (IOException e) {
@@ -237,7 +265,7 @@ public class MusicPlayerService  extends Service{
         }
     }
 
-    class  MyOnCompletionListener implements MediaPlayer.OnCompletionListener {
+    class MyOnCompletionListener implements MediaPlayer.OnCompletionListener {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
@@ -251,14 +279,16 @@ public class MusicPlayerService  extends Service{
         public void onPrepared(MediaPlayer mp) {
             //ctrl+alt+c
             //通知Activity更新数据
-            notifyChange(SEND_MESSAGE_TO_ACTIVITY);
+            //      notifyChange(SEND_MESSAGE_TO_ACTIVITY);
+             //采用EventBus
+            EventBus.getDefault().post(mediaItem);
 
             start();
         }
     }
 
     private void notifyChange(String sendMessageToActivity) {
-        Intent intent  = new Intent(sendMessageToActivity);
+        Intent intent = new Intent(sendMessageToActivity);
         sendBroadcast(intent);
     }
 
@@ -286,13 +316,13 @@ public class MusicPlayerService  extends Service{
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(this, AudioPlyerActivity.class);
-        intent.putExtra("notification",true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = new Intent(this, AudioPlayerActivity.class);
+        intent.putExtra("notification", true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.notification_music_playing)
                 .setContentTitle("我的音乐")
-                .setContentText("正在播放："+ getName())
+                .setContentText("正在播放：" + getName())
                 .setContentIntent(pendingIntent)
                 .build();
         manager.notify(1, notification);
@@ -361,18 +391,111 @@ public class MusicPlayerService  extends Service{
     }
 
     /**
-     * 播放下一个视频
+     * 播放下一个音频
      */
     private void next() {
+        //1.根据当前的播放模式，设置下一个的位置
+        setNextPosition();
+        //2.根据当前的播放模式和下标位置去播放音频
+        openNextAudio();
 
+
+    }
+
+    private void setNextPosition() {
+        int playmode = getPlayMode();
+        if (playmode == MusicPlayerService.REPEAT_NORMAL) {
+            position++;
+        } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+            position++;
+            if (position >= mediaItems.size()) {
+                position = 0;
+            }
+        } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+            position++;
+            if (position >= mediaItems.size()) {
+                position = 0;
+            }
+        } else {
+            position++;
+        }
+    }
+
+    private void openNextAudio() {
+        int playmode = getPlayMode();
+        if (playmode == MusicPlayerService.REPEAT_NORMAL) {
+            if (position < mediaItems.size()) {
+                //正常范围
+                openAudio(position);
+            } else {
+                position = mediaItems.size() - 1;
+            }
+        } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+            openAudio(position);
+        } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+            openAudio(position);
+        } else {
+            if (position < mediaItems.size()) {
+                //正常范围
+                openAudio(position);
+            } else {
+                position = mediaItems.size() - 1;
+            }
+        }
     }
 
 
     /**
-     * 播放上一个视频
+     * 播放上一个音频
      */
     private void pre() {
+        //1.根据当前的播放模式，设置上一个的位置
+        setPrePosition();
+        //2.根据当前的播放模式和下标位置去播放音频
+        openPreAudio();
+    }
 
+
+    private void openPreAudio() {
+        int playmode = getPlayMode();
+        if (playmode == MusicPlayerService.REPEAT_NORMAL) {
+            if (position >= 0) {
+                //正常范围
+                openAudio(position);
+            } else {
+                position = 0;
+            }
+        } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+            openAudio(position);
+        } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+            openAudio(position);
+        } else {
+            if (position >= 0) {
+                //正常范围
+                openAudio(position);
+            } else {
+                position = 0;
+            }
+        }
+    }
+
+    private void setPrePosition() {
+        int playmode = getPlayMode();
+        if (playmode == MusicPlayerService.REPEAT_NORMAL) {
+            position--;
+        } else if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+            position--;
+            if (position < 0) {
+                position = mediaItems.size() - 1;
+            }
+        } else if (playmode == MusicPlayerService.REPEAT_ALL) {
+            position--;
+            if (position < 0) {
+                position = mediaItems.size() - 1;
+            }
+        } else {
+            position--;
+        }
     }
 
     /**
@@ -381,6 +504,16 @@ public class MusicPlayerService  extends Service{
      * @param playmode
      */
     private void setPlayMode(int playmode) {
+        this.playmode = playmode;
+        CacheUtils.putPlaymode(this, "playmode", playmode);
+
+        if (playmode == MusicPlayerService.REPEAT_SINGLE) {
+            //单曲循环播放-不会触发播放完成的回调
+            mediaPlayer.setLooping(true);
+        } else {
+            //不循环播放
+            mediaPlayer.setLooping(false);
+        }
 
     }
 
@@ -390,22 +523,23 @@ public class MusicPlayerService  extends Service{
      * @return
      */
     private int getPlayMode() {
-        return 0;
+        return playmode;
     }
 
 
     /**
      * 是否在播放音频
+     *
      * @return
      */
-    private boolean isPlaying(){
+    private boolean isPlaying() {
         return mediaPlayer.isPlaying();
     }
 
     /**
      * 进度条
      */
-    private void seekTo(int progrss){
+    private void seekTo(int progrss) {
         mediaPlayer.seekTo(progrss);
     }
 }

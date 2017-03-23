@@ -9,10 +9,13 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/AgoraDemo" />
+            <option value="$PROJECT_DIR$/EventBus-Sample" />
+            <option value="$PROJECT_DIR$/EventBus3.0_Sample" />
             <option value="$PROJECT_DIR$/StartAllPlayer" />
             <option value="$PROJECT_DIR$/SurfaceViewDemo" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/binderService" />
+            <option value="$PROJECT_DIR$/tryEventBus_simple" />
             <option value="$PROJECT_DIR$/vitamio" />
             <option value="$PROJECT_DIR$/vitamio-sample" />
             <option value="$PROJECT_DIR$/xListView" />

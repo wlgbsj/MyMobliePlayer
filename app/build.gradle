@@ -31,4 +31,5 @@ dependencies {
     compile project(':xutils')
     compile files('src/main/libs/glide-3.7.0.jar')
     compile files('src/main/libs/picasso-2.5.2.jar')
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
