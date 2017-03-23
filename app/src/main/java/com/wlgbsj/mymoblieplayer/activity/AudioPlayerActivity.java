@@ -24,6 +24,7 @@ import com.wlgbsj.mymoblieplayer.R;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
 import com.wlgbsj.mymoblieplayer.service.MusicPlayerService;
 import com.wlgbsj.mymoblieplayer.utils.Utils;
+import com.wlgbsj.mymoblieplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public class AudioPlayerActivity extends Activity implements View.OnClickListener {
     public static final int PROGRESS = 1;
+    public static final int SHOW_LYRIC =2;
     private int position;
     private IMusicPlayerService service;//服务的代理类，通过它可以调用服务的方法
     private ImageView ivIcon;
@@ -52,11 +54,26 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
     private boolean notificaiton = false;
 
+    private ShowLyricView showLyricView;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case  SHOW_LYRIC:
+                    try {
+                        int currentPosition = service.getCurrentPosition();
+                        showLyricView.showNextLyric(currentPosition);
+
+                        handler.removeMessages(SHOW_LYRIC);
+                        handler.sendEmptyMessage(SHOW_LYRIC);
+
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
 
                 case PROGRESS:
 
@@ -162,6 +179,8 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
 
                 handler.sendEmptyMessage(PROGRESS);
+
+                handler.sendEmptyMessage(SHOW_LYRIC);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -188,6 +207,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         btnAudioStartPause = (Button) findViewById(R.id.btn_audio_start_pause);
         btnAudioNext = (Button) findViewById(R.id.btn_audio_next);
         btnLyrc = (Button) findViewById(R.id.btn_lyrc);
+        showLyricView= (ShowLyricView) findViewById(R.id.ShowLyricView);
 
         btnAudioPlaymode.setOnClickListener(this);
         btnAudioPre.setOnClickListener(this);
