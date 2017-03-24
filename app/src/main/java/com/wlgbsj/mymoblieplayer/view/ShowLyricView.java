@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.wlgbsj.mymoblieplayer.domain.Lyric;
+import com.wlgbsj.mymoblieplayer.utils.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class ShowLyricView extends TextView {
      * 每行的高度
      */
 
-    private float textHeight = 50;
+    private float textHeight ;
     private long currentTime;
     private long timePoint;
     private long sleepTime;
@@ -57,41 +58,42 @@ public class ShowLyricView extends TextView {
 
     public ShowLyricView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
+        initView(context);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        width = w;
+        width = w;//获取 view的宽高
         height = h;
     }
 
-    private void initView() {
+    private void initView(Context context) {
+        textHeight = DensityUtil.dip2px(context,18);
         paint = new Paint();
         paint.setColor(Color.GREEN);
         paint.setAntiAlias(true);
-        paint.setTextSize(50);
+        paint.setTextSize(DensityUtil.dip2px(context,16));
         //设置居中对齐
         paint.setTextAlign(Paint.Align.CENTER);
 
         whitepaint = new Paint();
         whitepaint.setColor(Color.WHITE);
         whitepaint.setAntiAlias(true);
-        whitepaint.setTextSize(50);
+        whitepaint.setTextSize(DensityUtil.dip2px(context,16));
         //设置居中对齐
         whitepaint.setTextAlign(Paint.Align.CENTER);
 
 
-        lyrics = new ArrayList<Lyric>();
+       // lyrics = new ArrayList<Lyric>();
 
-        for (int i = 0; i < 1000l; i++) {
+        /*for (int i = 0; i < 1000l; i++) {
             Lyric lyric = new Lyric();
             lyric.setContent(i + "aaaaaaaaa" + i);
             lyric.setSleepTime(1500 * i);
             lyric.setTimePoint(1000 * i);
             lyrics.add(lyric);
-        }
+        }*/
     }
 
 
@@ -133,6 +135,7 @@ public class ShowLyricView extends TextView {
         }
     }
 
+    //通过当前的时间 去改变 歌词里表中歌词的索引位置
     public void showNextLyric(int currentPosition) {
         this.currentTime = currentPosition;
 
@@ -158,5 +161,9 @@ public class ShowLyricView extends TextView {
         //invalidate()导致onDraw方法执行
         invalidate();
 
+    }
+
+    public void setLyrics(ArrayList<Lyric> lyrics) {
+        this.lyrics = lyrics;
     }
 }

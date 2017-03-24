@@ -23,12 +23,15 @@ import com.wlgbsj.mymoblieplayer.IMusicPlayerService;
 import com.wlgbsj.mymoblieplayer.R;
 import com.wlgbsj.mymoblieplayer.domain.MediaItem;
 import com.wlgbsj.mymoblieplayer.service.MusicPlayerService;
+import com.wlgbsj.mymoblieplayer.utils.LyricUtils;
 import com.wlgbsj.mymoblieplayer.utils.Utils;
 import com.wlgbsj.mymoblieplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
 
 /**
  * Created by wlgbsj on 2017/3/22  16:04.
@@ -180,11 +183,44 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
 
                 handler.sendEmptyMessage(PROGRESS);
 
-                handler.sendEmptyMessage(SHOW_LYRIC);
+                ShowLyric();
+
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
+
+    }
+
+    private void ShowLyric() {
+        //解析歌词
+        LyricUtils lyricUtils = new LyricUtils();
+
+        try {
+            String path = service.getAudioPath();//得到歌曲的绝对路径
+
+            //传歌词文件
+            //mnt/sdcard/audio/beijingbeijing.mp3
+            //mnt/sdcard/audio/beijingbeijing.lrc
+            path = path.substring(0,path.lastIndexOf("."));
+            File file = new File(path + ".lrc");
+            if(!file.exists()){
+                file = new File(path + ".txt");
+            }
+            lyricUtils.readLyricFile(file);//解析歌词
+
+            showLyricView.setLyrics(lyricUtils.getLyrics());
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+
+        if(lyricUtils.isExistsLyric()){
+            handler.sendEmptyMessage(SHOW_LYRIC);
+        }
+
 
     }
 
