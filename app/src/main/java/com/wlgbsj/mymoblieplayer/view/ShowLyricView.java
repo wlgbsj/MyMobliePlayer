@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ShowLyricView extends TextView {
 
-    private List<Lyric> lyrics;
+    private List<Lyric> lyrics  ;
     private Paint paint;
     private Paint whitepaint;
 
@@ -43,9 +43,9 @@ public class ShowLyricView extends TextView {
      */
 
     private float textHeight ;
-    private long currentTime;
-    private long timePoint;
-    private long sleepTime;
+    private float currentPositon;
+    private float timePoint;
+    private float sleepTime;
 
 
     public ShowLyricView(Context context) {
@@ -69,7 +69,7 @@ public class ShowLyricView extends TextView {
     }
 
     private void initView(Context context) {
-        textHeight = DensityUtil.dip2px(context,18);
+        textHeight = DensityUtil.dip2px(context,17);
         paint = new Paint();
         paint.setColor(Color.GREEN);
         paint.setAntiAlias(true);
@@ -102,6 +102,25 @@ public class ShowLyricView extends TextView {
         super.onDraw(canvas);
 
         if (lyrics != null && lyrics.size() > 0) {
+
+            //往上推移  添加平移动画 注意这几个值应为float，变为很细微
+
+            float plush = 0;
+            if(sleepTime ==0){
+                plush = 0;
+            }else{
+                //平移
+                //这一句所花的时间 ：休眠时间 = 移动的距离 ： 总距离（行高）
+                //移动的距离 =  (这一句所花的时间 ：休眠时间)* 总距离（行高）
+//                float delta = ((currentPositon-timePoint)/sleepTime )*textHeight;
+
+                //屏幕的的坐标 = 行高 + 移动的距离
+                plush = textHeight + ((currentPositon-timePoint)/sleepTime )*textHeight;
+            }
+            canvas.translate(0,-plush);
+
+
+
             //当前句
             //歌词内容
             String currentContent = lyrics.get(index).getContent();
@@ -137,7 +156,7 @@ public class ShowLyricView extends TextView {
 
     //通过当前的时间 去改变 歌词里表中歌词的索引位置
     public void showNextLyric(int currentPosition) {
-        this.currentTime = currentPosition;
+        this.currentPositon = currentPosition;
 
         if (lyrics == null) {
             return;
@@ -146,10 +165,10 @@ public class ShowLyricView extends TextView {
         //就要得到当前高亮显示的这个歌词的索引 index timePoint 和sleepTime
         for (int i = 1; i < lyrics.size(); i++) {
             //找出符合高亮显示的居中
-            if (currentTime < lyrics.get(i).getTimePoint()) {
+            if (currentPositon < lyrics.get(i).getTimePoint()) {
                 int tempindex = i - 1;
                 //找到马上就要高亮显示的具体的某一条句子
-                if (currentTime >= lyrics.get(tempindex).getTimePoint()) {
+                if (currentPositon >= lyrics.get(tempindex).getTimePoint()) {
                     index = tempindex;
                     timePoint = lyrics.get(tempindex).getTimePoint();
                     sleepTime = lyrics.get(tempindex).getSleepTime();

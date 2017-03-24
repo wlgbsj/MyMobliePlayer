@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,6 +26,7 @@ import com.wlgbsj.mymoblieplayer.domain.MediaItem;
 import com.wlgbsj.mymoblieplayer.service.MusicPlayerService;
 import com.wlgbsj.mymoblieplayer.utils.LyricUtils;
 import com.wlgbsj.mymoblieplayer.utils.Utils;
+import com.wlgbsj.mymoblieplayer.view.BaseVisualizerView;
 import com.wlgbsj.mymoblieplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,6 +60,8 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     private boolean notificaiton = false;
 
     private ShowLyricView showLyricView;
+
+    private BaseVisualizerView baseVisualizerView;
 
     private Handler handler = new Handler() {
         @Override
@@ -170,7 +174,35 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
     public void showViewData(MediaItem mediaItem) {
         showData();
         checkPlaymode();
+        setupVisualizerFxAndUi();
+
     }
+
+
+    private Visualizer mVisualizer;
+
+    /**
+     * 注意要加上权限 <uses-permission android:name="android.permission.RECORD_AUDIO"/ >
+     * 生成一个VisualizerView对象，使音频频谱的波段能够反映到 VisualizerView上
+     */
+    private void setupVisualizerFxAndUi()
+    {
+
+        int audioSessionid = 0;
+        try {
+            audioSessionid = service.getAudioSessionId();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        System.out.println("audioSessionid=="+audioSessionid);
+        mVisualizer = new Visualizer(audioSessionid);
+        // 参数内必须是2的位数
+        mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        // 设置允许波形表示，并且捕获它
+        baseVisualizerView.setVisualizer(mVisualizer);
+        mVisualizer.setEnabled(true);
+    }
+
 
     private void showData() {
         if (service != null) {
@@ -244,6 +276,7 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
         btnAudioNext = (Button) findViewById(R.id.btn_audio_next);
         btnLyrc = (Button) findViewById(R.id.btn_lyrc);
         showLyricView= (ShowLyricView) findViewById(R.id.ShowLyricView);
+        baseVisualizerView = (BaseVisualizerView) findViewById(R.id.baseVisualizerView);
 
         btnAudioPlaymode.setOnClickListener(this);
         btnAudioPre.setOnClickListener(this);
@@ -403,6 +436,15 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
                 btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_all_selector);
             } else {
                 btnAudioPlaymode.setBackgroundResource(R.drawable.btn_audio_playmode_normal_selector);
+            }
+
+
+
+            //校验播放和暂停的按钮
+            if(service.isPlaying()){
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_start_selector);
+            }else{
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_pause_selector);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

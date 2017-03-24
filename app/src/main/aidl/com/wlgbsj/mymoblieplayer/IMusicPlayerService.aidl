@@ -90,4 +90,7 @@ interface IMusicPlayerService {
            * 进度条
           */
         void seekTo(int progrss);
+
+
+        int getAudioSessionId();
 }

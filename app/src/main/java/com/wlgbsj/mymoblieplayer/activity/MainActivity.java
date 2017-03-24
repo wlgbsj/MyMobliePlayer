@@ -1,15 +1,18 @@
 package com.wlgbsj.mymoblieplayer.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.wlgbsj.mymoblieplayer.R;
 import com.wlgbsj.mymoblieplayer.base.BasePager;
@@ -20,6 +23,7 @@ import com.wlgbsj.mymoblieplayer.pager.VideoPager;
 
 import java.util.ArrayList;
 
+
 /**
  * 作者：杨光福 on 2016/7/16 10:26
  * 微信：yangguangfu520
@@ -29,7 +33,7 @@ import java.util.ArrayList;
 public class MainActivity extends FragmentActivity {
 
 
-    private RadioGroup  rg_bottom_tag;
+    private RadioGroup rg_bottom_tag;
 
     /**
      * 页面的集合
@@ -66,7 +70,7 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-            switch (checkedId){
+            switch (checkedId) {
                 default:
                     position = 0;
                     break;
@@ -97,12 +101,12 @@ public class MainActivity extends FragmentActivity {
         FragmentTransaction ft = manager.beginTransaction();
         //3.替换
         //这种 new Fragment用法  早  compile 'com.android.support:appcompat-v7:24.2.1'  不行 23 才可以
-        ft.replace(R.id.fl_main_content,new Fragment(){
+        ft.replace(R.id.fl_main_content, new Fragment() {
             @Nullable
             @Override
             public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
                 BasePager basePager = getBasePager();
-                if(basePager != null){
+                if (basePager != null) {
                     //各个页面的视图
                     return basePager.rootView;
                 }
@@ -116,16 +120,38 @@ public class MainActivity extends FragmentActivity {
 
     /**
      * 根据位置得到对应的页面
+     *
      * @return
      */
     private BasePager getBasePager() {
         BasePager basePager = basePagers.get(position);
-        if(basePager != null&&!basePager.isInitData){
+        if (basePager != null && !basePager.isInitData) {
             basePager.initData();//联网请求或者绑定数据
             basePager.isInitData = true;
         }
         return basePager;
     }
 
+    private boolean isExit = false;
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (position != 0) {//不是第一个界面的退出
+                rg_bottom_tag.check(0);
+                return true;
+            } else if (!isExit) {// 已经到了第一个界面 的退出
+                isExit = true;
+                Toast.makeText(MainActivity.this,"再次点击，2秒后会退出应用",Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      isExit = false;
+                    }
+                },2000);
+               return  true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);//系统默认的推出方法
+    }
 }
