@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "com.wlgbsj.mymoblieplayer"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -29,7 +29,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':vitamio')
     compile project(':xutils')
-    compile files('src/main/libs/glide-3.7.0.jar')
-    compile files('src/main/libs/picasso-2.5.2.jar')
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile files('src/libs/Msc.jar')
+    compile files('src/libs/Sunflower.jar')
+    compile files('src/libs/glide-3.7.0.jar')
+    compile files('src/libs/gson-2.2.1.jar')
+    compile files('src/libs/picasso-2.5.2.jar')
 }

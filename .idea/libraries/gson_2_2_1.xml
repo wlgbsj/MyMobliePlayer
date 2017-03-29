@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="glide-3.7.0">
+  <library name="gson-2.2.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/src/libs/glide-3.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/app/src/libs/gson-2.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

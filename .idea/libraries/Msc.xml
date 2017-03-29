@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Msc">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/speechDemo/libs/Msc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/SpeechDemo2/libs/Msc.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
