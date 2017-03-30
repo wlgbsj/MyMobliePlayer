@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/SurfaceViewDemo/SurfaceViewDemo.iml" filepath="$PROJECT_DIR$/SurfaceViewDemo/SurfaceViewDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/binderService/binderService.iml" filepath="$PROJECT_DIR$/binderService/binderService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jcvideoplayer-lib/jcvideoplayer-lib.iml" filepath="$PROJECT_DIR$/jcvideoplayer-lib/jcvideoplayer-lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/speechDemo/speechDemo.iml" filepath="$PROJECT_DIR$/speechDemo/speechDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/tryEventBus_simple/tryEventBus_simple.iml" filepath="$PROJECT_DIR$/tryEventBus_simple/tryEventBus_simple.iml" />
       <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />

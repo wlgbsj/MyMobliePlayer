@@ -9,10 +9,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
 import com.wlgbsj.mymoblieplayer.IMusicPlayerService;
@@ -280,6 +282,7 @@ public class MusicPlayerService extends Service {
 
     class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onPrepared(MediaPlayer mp) {
             //ctrl+alt+c
@@ -301,6 +304,7 @@ public class MusicPlayerService extends Service {
     /**
      * 播放音乐
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void start() {
 
         mediaPlayer.start();

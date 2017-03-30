@@ -1,2 +1,2 @@
-include ':app', ':StartAllPlayer', ':vitamio-sample', ':vitamio', ':AgoraDemo', ':SurfaceViewDemo', ':xutils', ':xUtils3_sample', ':xListView', ':binderService', ':EventBus-Sample', ':tryEventBus_simple', ':EventBus3.0_Sample', ':Android应用源码音乐实时跳动频谱显示Demo', ':SpeechDemo2', ':voicedialog'
+include ':app', ':StartAllPlayer', ':vitamio-sample', ':vitamio', ':AgoraDemo', ':SurfaceViewDemo', ':xutils', ':xUtils3_sample', ':xListView', ':binderService', ':EventBus-Sample', ':tryEventBus_simple', ':EventBus3.0_Sample', ':Android应用源码音乐实时跳动频谱显示Demo', ':SpeechDemo2', ':voicedialog', ':jcvideoplayer-lib'
 include ':speechDemo'

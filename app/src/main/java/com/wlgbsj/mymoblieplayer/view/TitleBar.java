@@ -82,9 +82,9 @@ public class TitleBar extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case  R.id.iv_321:
+            /*case  R.id.iv_321:
                 Toast.makeText(context, "321", Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
 
             case R.id.tv_search://搜索
                 Intent intent = new Intent(context,SearchActivity.class);

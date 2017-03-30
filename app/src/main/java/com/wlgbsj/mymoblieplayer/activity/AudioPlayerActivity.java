@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
+
 /**
  * Created by wlgbsj on 2017/3/22  16:04.
  */
@@ -166,16 +167,24 @@ public class AudioPlayerActivity extends Activity implements View.OnClickListene
             //ui线程
             //音乐开始播放  通知Activity更新View
             showViewData(null);
+            //onEventMainThread(null);
         }
     }
 
     //订阅方法   不能私有方法   要用public
-    @Subscribe (threadMode = ThreadMode.MAIN,sticky = false,priority = 0)
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = false,priority = 0)
     public void showViewData(MediaItem mediaItem) {
         showData();
         checkPlaymode();
         setupVisualizerFxAndUi();
 
+    }
+
+
+    public void onEventMainThread(MediaItem mediaItem){
+        showData();
+        checkPlaymode();
+        setupVisualizerFxAndUi();
     }
 
 

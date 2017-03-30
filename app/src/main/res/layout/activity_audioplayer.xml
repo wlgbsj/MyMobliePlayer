@@ -21,8 +21,8 @@
             android:id="@+id/baseVisualizerView"
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            />
+            android:layout_centerHorizontal="true" />
+
 
         <TextView
             android:id="@+id/tv_artist"
@@ -47,7 +47,7 @@
 
 
     <LinearLayout
-        android:id="@+id/ll_buttom"
+        android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -128,9 +128,7 @@
         android:id="@+id/ShowLyricView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ll_buttom"
-        android:layout_below="@+id/rl_top"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_above="@id/ll_bottom"
+        android:layout_below="@id/rl_top" />
 
 </RelativeLayout>
